@@ -48,9 +48,12 @@ struct DetailView: View {
                     Label("No meetings yet", systemImage: "calendar.badge.exclamationmark")
                 }
                 ForEach(scrum.history) { history in
-                    HStack {
-                        Image(systemName: "calendar")
-                        Text(history.date, style: .date)
+                    NavigationLink(destination: HistoryView(history: history)) {
+                        HStack {
+                            Image(systemName: "calendar")
+                            Text(history.date, style: .date)
+                            Text(history.date, style: .time)
+                        }
                     }
                 }
             }
@@ -84,8 +87,17 @@ struct DetailView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        DetailView(scrum: .constant(DailyScrum.sampleData[0]))
+struct DetailView_Preview: PreviewProvider {
+    static func scrumData() -> DailyScrum {
+        var scrum: DailyScrum = .init(title: "Design", attendees: ["Tom", "Jerry", "Jack"], lengthInMinutes: 20, theme: .indigo)
+        var history: History = .init(attendees: scrum.attendees, transcript: "This is a demo transcript!")
+        scrum.history.append(history)
+        return scrum
+    }
+
+    static var previews: some View {
+        NavigationStack {
+            DetailView(scrum: .constant(scrumData()))
+        }
     }
 }
